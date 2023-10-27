@@ -79,6 +79,7 @@ Justamente por esse uso, essa camada costuma ser construída com infraestrutura 
 ### 3.1) Camadas no Data Mesh
 
 
+
 ---
 
 ## 4. Tipos de dados

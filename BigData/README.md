@@ -4,7 +4,7 @@ Peso de 25% na prova
 
 ---
 
-## 1. O que é Big Data
+## 1. O que é Big Data :white_check_mark:
 
 > O que é Big Data, quais seus principais desafios (armazenamento, integração, análise e suporte "Fast Data").
 
@@ -23,6 +23,7 @@ O contexto tradicional de bancos relacionais apresenta limitações em escalonam
 ### 1.2) Fast Data
 
 ![](../Imagens/FastData.png)
+
 [Fonte](https://blog.dsacademy.com.br/fast-data-a-evolucao-do-big-data/)
 
 Por muito tempo, o volume foi o foco no Big Data, mas cada vez mais o mundo muda de uma forma mais rápida, e para garantir competitividade, as empresas precisam extrair valor dos dados em formatos variados com maior velocidade.
@@ -74,6 +75,9 @@ Dados já tratados. Sofreram as transformações necessários para serem consumi
 Dados tratados e enriquecidos, estando prontos para serem consumidos por aplicações externas.
 
 Justamente por esse uso, essa camada costuma ser construída com infraestrutura de bancos de dados relacionais (SQL Server, Oracle, etc.), facilitando a conexão com APIs e sistemas transacionais.
+
+### 3.1) Camadas no Data Mesh
+
 
 ---
 

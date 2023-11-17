@@ -34,9 +34,13 @@ Em arquiteturas fast data, diferente do processamento batch tradicional feito du
 
 ---
 
-## 2. Tipos de Processamento
+## 2. Tipos de Processamento :white_check_mark:
 
 > Quais os tipos de processamento de dados, ETL vs ELT e análise de complexidade e aplicabilidade em cenários reais.
+
+**ETL**: Extract-Transform-Load - primeiro você extrai os dados de um sistema origem, transforma esses dados que estão em formato raw (muitas vezes sem estrutura) e os deixa mais legíveis para serem trabalhados pelo analista de dados ou ferramenta de dataviz. Por fim, você carrega esses dados em algum repositório para serem consumidos.
+
+**ELT**: Extract-Load-Transform - primeiro extraímos e depois carregamos os dados no repositório de destino, fazendo a transformação apenas no final. Com o contexto da nuvem (armazenamento escalável e barato), então é mais fácil armazenar a informação para somente transforma o que for necessário.
 
 ---
 
@@ -108,15 +112,69 @@ Exemplos: Tabelas de um banco de dado relacional.
 
 ---
 
-## Métricas de qualidade
+## 5. Métricas de qualidade
 
 > Qual a importância e quais métricas de qualidade de dados devem ser utilizadas em pipelines de dados.
 
 ---
 
-## Infraestrutura de Sistemas Distribuídos
+## 6. Infraestrutura de Sistemas Distribuídos
 
 > O que é o ambiente Hadoop, quais ferramentas o compõe, vantagens e desvantagens do paradigma de programação MapReduce.
+
+### 6.1) Ecossistema Hadoop
+
+Componentes do Hadoop Core:
+
+* HDFS: sistema de armazenamento distribuído
+* MapReduce: modelo de programação para processamento paralelo
+* YARN: gerenciador de recursos do cluster Hadoop
+
+#### 6.1.1. HDFS
+
+Hadoop Distributed FileSystem é um componente do Hadoop Core para armazenar volumes massivos de dados de forma distribuída em um cluster de computadores.
+
+O HDFS trabalha com um conceito de **write once/ read many** que, por sua vez, indica um padrão de utilização onde os usuários realizam a escrita de grandes quantidades de dados uma única vez e realizam a leitura múltiplas vezes. Neste cenário, o tempo para leitura de todo o conjunto de dados é mais importante do que a latência em ler o primeiro registro.
+
+O HDFS também possui o conceito de **hardware commodity**, pois não precisa de máquina poderas, equipamentos comuns e de baixo custo podem ser usados no cluster.
+
+> **Cenários em que o HDFS não é adequado**
+>
+> * Padrões de acesso com baixa latência
+> * ExistÊncia de small files
+> * Grande quantidade de modificações em arquivos
+
+O HDFS trabalha com "Blocos de Armazenamento" de 128MB (ou 256MN em alguns cenários) canalizando o posicionamento de um grande volume de dados em chunks.
+
+![](../Imagens/HDFS.png)
+
+Um arquivo de grande volume é **particionado** e tem suas partes armazenadas separadamente em cada bloco (que é um nó no cluster).
+
+**Replicação de Dados no Cluster**
+
+Por padrão, sempre que um grande volume de dados é armazenado no cluster de computadores, existe um fator de replicação que automaticamente realiza cópias dos blocos em múltiplos nós do sistema.
+
+![](../Imagens/HDFS-replication.png)
+
+**Arquitetura do HDFS**
+
+* Namenodes (master): gerencia toda a árvore do sistema de armazenamento e os metadados para todos os arquivos e diretórios presentes. Os namenodes mantém um arquivo conhecido como **edit log** responsável por registrar informações sobre o que é criado, mantido ou alterado no cluster. Além disso, possuem informações de todos os datanodes do sistema.
+
+* Datanodes (workers): atuam como os verdadeiros trabalhadores do cluster. São eles que armazenam os dados em blocos e retornam, sempre que solicitados, informações para o namenode para que este saiba exatamente a localização dos arquivos.
+
+![](../Imagens/HDFS-architecture.png)
+
+**Recuperação à Falhas**
+
+Considerando a arquitetura acima, é possível notar que o namenode é um ponto crítico de falha do sistema. Sua inexistência impede por completo a utilização do HDFS, visto a impossibilidade de obter informações de metadados e localidade dos dados nos blocos presentes nos datanodes do cluster.
+
+Para contornar isso, é possível:
+
+* **Realizar o backup dos metadados**: realizar backups periódicos locais ou em um outro sistema de arquivos para retomar a operação em caso de falhas. Nesta abordagem, eventualmente alguns dados serão perdidos, dado que a retomada do sistema pode ter algum delay;
+
+* **Manter um secondary namenode**: apenas do nome intuitivo, não há um namenode secundário executando ao mesmo tempo que o primário. Basicamente, cópias dos arquivos importantes do namenode são mantidas em uma máquina separada no cluster para que, em eventuais falhas, o sistema possa ser recuperado.
+
+#### 6.1.2. MapReduce
 
 ---
 

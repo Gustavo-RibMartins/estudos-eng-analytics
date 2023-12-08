@@ -176,8 +176,89 @@ Para contornar isso, é possível:
 
 #### 6.1.2. MapReduce
 
+Motor de processamento distribuído que funciona com funções de mapeamento (map) e redução (reduce) que utilizam entradas e saídas baseadas em conjuntos de chave e valor. Cada uma dessas etapas possuem responsabilidades específicas na dinâmica de processamento dos dados:
+
+* **Map**: funções de mapeamento são normalmente usadas para filtrar, transforma ou converter dados;
+* **Reduce**: já as funções de redução, atuam na sumarização e agregação dos dados.
+
+![](../Imagens/MapReduce-Process.png)
+
+1. Os jobs (programas) submetidos no cluster Hadoop são divididos em tasks (tarefas);
+2. As tasks são então distribuídas para os nós do cluster (datanodes);
+3. Processos em Java são iniciados para o processamento dos dados;
+4. Neste ponto, dados do sistema distribuído (HDFS) são lidos conforme a requisição;
+5. Inicia-se a fase de mapeamento de acordo com a solicitação realizada;
+6. A saída da fase de mapeamente é então submetida a uma fase de redução, conforme a solicitação realizada;
+7. O resultado final é escrito novamente no HDFS.
+
+NA fase de **map**, cada task individual recebe uma porção dos dados. Assim, o número de tasks estabelecidas pelo sistema para atuar no job depende da quantidade de dados.
+
+Exemplo de uma etapa de mapeamente para obter a quantidade de vendas por vendedor:
+
+![](../Imagens/MapReduce-Map.png)
+
+> **Observação**: no exemplo acima foi aplicado um filtro (amout > 1.000) e selecionadas apenas as colunas relevantes para o resultado desejado. Ambas as operações são tasks de mapeamento, assim como transformações e qualquer outra operação em cenário de um pra um.
+
+Na sequência, a solicitação passa por um processo de "shuffle and sort" antes de chegar à fase de redução.
+
+**Shuffle and Sort** é um processo intermediário que as vezes é necessário e que faz a unificação dos dados de todas as tarefas de map executadas em cada datanode de modo a criar um input facilitado para a subsequente tarefa de reduce.
+
+![](../Imagens/MapReduce-ShuffleSort.png)
+
+Por fim, a etapa de reduce é onde ocorrem as agregações:
+
+![](../Imagens/MapReduce-Reduce.png)
+
+#### 6.1.3. YARN
+
+O YARN é o gerenciador de recursos de um cluster Hadoop.
+
+> YARN = Yet Another Resource Negotiator.
+
+O funcionamento do YARN está baseado na disponibilização de APIs responsáveis por entregar informações dos recursos presentes em um cluster de computadores. Em geral, estas APIs são transparentes aos usuários do Hadoop, sendo papel das aplicações de alto nível (como o MapReduce, por exemplo) realizar este contato de modo a tomar ações com base nas informações obtidas. Assim, é correto pontuar que o YARN atua em uma camada separada entre o armazenamento e aplicações de alto nível, sendo um grande intermediador entre as partes.
+
+![](../Imagens/YARN.png)
+
+Ele é basicamente o sistema que gerencia os recursos no cluster de computadores, decidindo quem executa as tarefas, quando as mesmas serão executadas, quais nós estão disponíveis para receber demandas e quais estão totalmente ocupados. O YARN é como o coração que permite o funcionamento do cluster.
+
+O YARN funciona da seguinte forma:
+
+![](../Imagens/YARN-esboco.png)
+
+**Application client**: programa solicitado pelo usuário. Pode ser um job de MapReduce, por exemplo.
+
+**Resource Manager**: gerencia e aloca recursos do cluster. Possui dois principais elementos: o `scheduler` e o `application manager`. Atua como um agendador global de recursos.
+
+**Node Manager**: presente em todos os nós do cluster. Executa e monitora os containers.
+
+**Container**: referência ao pacote de recursos incluindo RAM, CPU, Rede, HD, entre outros. Responsável por executar a aplicação com um conjunto restrito de recursos disponibilizados. Dependendo de como o YARN é configurado, um container é basicamente um processo Unix ou um cgroup Linux.
+
+**Application Process**: basicamente é o job submetido ao framework utilizado (ex: MapReduce).
+
 ---
 
 ## Framework Spark
 
 > Suas características, conceitos, sintaxe, vantagens e desvantagens.
+
+Apache Spark é um framework de processamento de dados em larga escala que foi desenvolvido para ser rápido, fácil de usar e escalável. Ele é projetado para trabalhar com grandes conjuntos de dados distribuídos em clusters de computadores.
+
+Ele utiliza cache na memória e execução de consulta otimizada para consultas analíticas rápidas em dados de qualquer tamanho.
+
+Ele fornece APIs de desenvolvimento em **Java, Scala, Python e R** e suporta a reutilização de código em várias cargas de trabalho - processamento em lote, consultas interativas, análise em tempo real, aprendizado de máquina e processamento de grafos.
+
+Com relação ao Hadoop MapReduce o Spark fornece os seguintes benefícios:
+
+* Mais rápido;
+* Amigável ao desenvolvedor;
+* Múltiplas cargas de trabalho;
+* Podemos utilizar diferentes linguagens de programação com Spark.
+
+![](../Imagens/Spark-Core.png)
+
+* O módulo **Spark SQL** contém sintaxe que os usuários de Pandas e SQL acharão familiar;
+* O módulo **Spark MLlib** pode ser usado para implementar muitos modelos populares de aprendizado de máquina;
+* O módulo **GraphX** para processamento de grafos;
+* O módulo **Spark Streaming** que é um mecanismo de processamento de stream escalável e tolerante a falhas desenvolvido sobre o mecanismo Spark SQL.
+
+**Spark Core** é a base da plataforma. É responsável pelo gerenciamento de memória, recuperação de falhas, agendamento, distribuição e monitoramento de jobs e interação com os sistemas de armazenamento. O Spark Core é exposto por meio de uma interface de APIs construídas em Java, Scala, Python e R. Essas APIs escondem a complexidade do processamento distribuído por trás de operadores simples de alto nível.

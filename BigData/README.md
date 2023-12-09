@@ -4,7 +4,7 @@ Peso de 25% na prova
 
 ---
 
-## 1. O que é Big Data :white_check_mark:
+## 1. O que é Big Data
 
 > O que é Big Data, quais seus principais desafios (armazenamento, integração, análise e suporte "Fast Data").
 
@@ -34,7 +34,7 @@ Em arquiteturas fast data, diferente do processamento batch tradicional feito du
 
 ---
 
-## 2. Tipos de Processamento :white_check_mark:
+## 2. Tipos de Processamento
 
 > Quais os tipos de processamento de dados, ETL vs ELT e análise de complexidade e aplicabilidade em cenários reais.
 
@@ -109,6 +109,97 @@ Exemplos: Tabelas de um banco de dado relacional.
  ### 4.3) Dados não estruturados
 
  Não possuem formato pré-definido. Pode ser um parágrafo de um livro, postagens de mídia social, imagens de satélite, etc.
+
+### 4.4) Formatos de arquivos para Big Data
+
+- Formatos menos utilizados em Data Lakes: XML, LOG e CSV;
+- Formatos mais usados em Data Lakes: Parquet, Avro, ORC,
+
+#### 4.4.1. XML
+
+Muito comum em ferramentas de ERP que trabalham com dados de notas fiscais. Usa o conceito de chave-valor mas, diferente do JSON, as chaves são TAGs e os valores vão dentro das TAGs, bem parecido com HTML.
+
+![](../Imagens/arquivo-xml.png)
+
+#### 4.4.2. LOGs
+
+Possuem formato de linha do tempo, sempre possuem um timestamp com data e hora.
+
+![](../Imagens/arquivo-log.png)
+
+#### 4.4.3. JSON
+
+JavaScript Object Notation: funciona no modelo de chave-valor. O grande benefício do JSON é poder armazenar todas as informações de um objeto de forma agrupada e não impor schema rígido as estruturas.
+
+![](../Imagens/arquivo-json.png)
+
+#### 4.4.4. Parquet
+
+O Parquet é um formato Open Source construído para o ecossistema Hadoop destinado ao armazenamento de dados estruturados. Assim como o HDF5, ele surge com a ambição de trabalhar com conjuntos de dados massivos, tendo em seu funcionamento uma abordagem diferente da tradicional orientada por linhas, onde cada linha armazena uma observação distinta. No Parquet, em cada linha é registrado todos os valores da coluna, o que permite uma **compressão mais eficiente**, sendo portanto, pouco custoso no disco.
+
+Em um CSV quando você faz uma consulta, você lê o arquivo todo. Por exemplo, em um arquivo com 20 bilhões de linhas e 300 colunas, você teria que ler o arquivo todo mesmo que precisasse apenas de uma coluna com 100 mil linhas.
+
+Exemplo:
+
+Dado no CSV
+![](../Imagens/parquet-dadoCSV.png)
+
+Dado no Parquet
+![](../Imagens/parquet-dadoParquet.png)
+
+Como desvantagem, sobressai o fato do formato restringir-se a dados estruturados, sendo menos felxível que o HDF5, o arquivo ser binário e a não existência de suporte em editores de planilhas.
+
+Comparação entre Parquet x CSV:
+![](../Imagens/parquet-vs-csv.png)
+[Fonte](https://www.databricks.com/br/glossary/what-is-parquet#:~:text=Caracter%C3%ADsticas%20do%20Parquet&text=Formato%20baseado%20em%20colunas%3A%20os,bancos%20de%20dados%20OLTP%20tradicionais.)
+
+#### 4.4.5. Avro
+
+O Avro funciona com uma estrutura de sub itens de um item assim como o JSON, até existe no Parquet como família de colunas (estilo Cassandra) mas não funciona muito bem, o Avro é melhor para isso assim como o JSON (Estrutura de dados "Nested").
+
+![](../Imagens/avro-file.png)
+
+Um ponto negativo do Avro em relação ao Parquet, é que quando uma informação é requerida, ele lÊ todo o arquivo e não só a parte que precisa como no Parquet. O Avro é mais indicado para gravação do que para leitura.
+
+#### 4.4.6. ORC
+
+É uma evolução do Parquet que trabalha de forma mais rápida e com menor armazenamento. Também utiliza o modelo colunar do Parquet e os mesmos princípios de trazer só o que realmente é necessário.
+
+![](../Imagens/orc-file.png)
+
+#### 4.4.7. Comparação
+
+![](../Imagens/comparacao-arquivos.png)
+
+#### 4.4.8. Compressão x Compactação
+
+Existem duas formas de se reduzir o tamanho de armazenamento dos arquivos, pela compressão e pela compactação, os quais são processos distintos.
+
+**Compressão**: a quantidade de bits usados para representar os dados são refuzidos;
+
+**Compactação**: é realizada a união de dados que estavam separados, como na desfragmentação de disco de um computador.
+
+A compressão é realizada por meio de diversos algoritmos de compressão, os quais irão reduzir a quantidade de bytes que representam um dado. A compressão também ajuda na remoção de redundância, onde por exemplo, "BBBBBB" que ocupa 6 bytes pode ser representado por "6B", que ocupa 2 bytes. Com isso, há uma redução do tamanho do arquivo e no armazenamento.
+
+A compressão depende do tipo de armanzenamento:
+
+* Formato baseado em linha: CSV, Avro e JSON;
+* Formato baseado em coluna: Parquet e ORC.
+
+Os arquivos baseados em linha são muito rápidos na escrita e lentos na leitura. Os baseados em coluna são o contrário.
+
+Além disso, dados com armazenamento colunar possuem uma grande vantagem em relação ao armazenamento em linha, pois o algoritmo aplica a compressão em dados que possuem o mesmo tipo (str, int, float, etc), já o em linha isso tende a ser o oposto, caso atabela possua colunas com tipos de dados distintos, gerando uma taxa de compressão menor.
+
+![](../Imagens/nivel-compressao.png)
+
+**Algoritmos de Compressão**
+
+* Gzip;
+* Bzip2;
+* Snappy;
+* LZO.
+
+![](../Imagens/comparacao-comparacao.png)
 
 ---
 
@@ -237,7 +328,7 @@ O YARN funciona da seguinte forma:
 
 ---
 
-## Framework Spark
+## 7. Framework Spark
 
 > Suas características, conceitos, sintaxe, vantagens e desvantagens.
 
@@ -262,3 +353,11 @@ Com relação ao Hadoop MapReduce o Spark fornece os seguintes benefícios:
 * O módulo **Spark Streaming** que é um mecanismo de processamento de stream escalável e tolerante a falhas desenvolvido sobre o mecanismo Spark SQL.
 
 **Spark Core** é a base da plataforma. É responsável pelo gerenciamento de memória, recuperação de falhas, agendamento, distribuição e monitoramento de jobs e interação com os sistemas de armazenamento. O Spark Core é exposto por meio de uma interface de APIs construídas em Java, Scala, Python e R. Essas APIs escondem a complexidade do processamento distribuído por trás de operadores simples de alto nível.
+
+## 7.1. PySpark
+
+PySpark é uma API em Python para executar o Spark e foi lançado para oferecer suporte à colaboração entre Apache Spark e Python. O PySpark também oferece suporta à interface do Apache Spark com conjuntos de dados distribuídos resilientes (RDDs) na linguagem de programação Python. Isso é obtido aproveitando a biblioteca Py4J.
+
+Os **RDDs** são a principal abstração de dados do Spark. Eles são coleções distribuídas de objetos e podem ser armazenados em memória ou no disco. O RDD é imutável, ou seja, uma vez criado, você não pode alterá-lo (mas pode criar uma cópia com as transformações necessárias).
+
+Imagine o RDD como uma tabela do banco de dados que pode guardar qualquer tipo de dado. O Spark armazena os dados do RDD em diferentes partições. Isso ajuda a reorganização computacional e otimização no processamento dos dados.
